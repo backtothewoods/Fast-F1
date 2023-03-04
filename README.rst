@@ -1,9 +1,4 @@
-**Looking for Feedback**
-
-I am planning to add full support for the Ergast API with the next major
-release of FastF1 and I am looking for feedback before finalizing this
-feature. You can find more information here:
-https://github.com/theOehrly/Fast-F1/pull/311
+This is a fork of theOehrly/Fast-F1 that is meant to extend its livetiming functionality to support live telemetry streaming and inspection.
 
 =======
 Fast F1
