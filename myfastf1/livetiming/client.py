@@ -31,13 +31,19 @@ def messages_from_raw(r):
         except json.JSONDecodeError:
             errorcount += 1
             continue
-        messages = data['M'] if 'M' in data and len(data['M']) > 0 else {}
-        for inner_data in messages:
-            hub = inner_data['H'] if 'H' in inner_data else ''
-            if hub.lower() == 'streaming':
-                # method = inner_data['M']
-                message = inner_data['A']
-                ret.append(message)
+
+        if 'M' in data and len(data['M']) > 0:
+            messages = data['M']
+            for inner_data in messages:
+                hub = inner_data['H'] if 'H' in inner_data else ''
+                if hub.lower() == 'streaming':
+                    # method = inner_data['M']
+                    message = inner_data['A']
+                    ret.append(message)
+        elif 'R' in data:
+            ret = list(map(lambda t: list(t), list(data['R'].items())))
+        else:
+            ret = []
 
     return ret, errorcount
 
@@ -106,6 +112,10 @@ class SignalRClient:
     def _to_file(self, msg):
         self._output_file.write(msg + '\n')
         self._output_file.flush()
+        msg = msg.replace("'", '"') \
+            .replace('True', 'true') \
+            .replace('False', 'false')
+        requests.post(url='http://localhost:5000/api/message', data=msg.encode('utf-8', 'ignore'))
 
     async def _on_do_nothing(self, msg):
         # just do nothing with the message; intended for debug mode where some
